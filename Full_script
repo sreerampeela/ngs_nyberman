@@ -6,4 +6,9 @@ gunzip chr6.fa.gz
 # download SRA TOOL KIT and configure it
 # Download raw data
 prefetch ERR12186498 --output-directory $PWD --max-size 0.25g
-fastq-dump --split-files --gzip  ERR12186498
+fastq-dump --split-files --gzip  ERR12186498 -X 500000
+
+# run fastp
+
+
+# map reads with bowtie2
