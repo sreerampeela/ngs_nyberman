@@ -1,1 +1,9 @@
-#
+# get ref genome
+wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr6.fa.gz
+gunzip chr6.fa.gz
+
+# get sample fastq
+# download SRA TOOL KIT and configure it
+# Download raw data
+prefetch ERR12186498 --output-directory $PWD --max-size 0.25g
+fastq-dump --split-files --gzip  ERR12186498
