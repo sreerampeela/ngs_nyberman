@@ -22,8 +22,8 @@ cd bwa; make
 # index ref genome with bwa
 wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr6.fa.gz
 gunzip chr6.fa.gz
-./bwa index chr6.fa
-./bwa mem chr6.fa ERR11468776_trimmed_1.fastq.gz ERR11468776_trimmed_2.fastq.gz | gzip -3 > AD2881.sam.gz
+bwa index -a bwtsw -p chr6_ref chr6.fasta
+bwa mem ../ref_genome/chr6_ref ../raw_data/ERR11468776_trimmed_1.fastq.gz ../raw_data/ERR11468776_trimmed_2.fastq.gz -t 10 -o AD2881.sam
 
 ##### bwa STDOUT ####
 
