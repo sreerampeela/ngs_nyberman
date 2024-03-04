@@ -5,44 +5,26 @@ gunzip chr6.fa.gz
 # get sample fastq
 # download SRA TOOL KIT and configure it
 # Download raw data
-prefetch ERR12186498 --output-directory $PWD --max-size 0.25g
-fastq-dump --split-files --gzip  ERR12186498 -X 500000
+# using the three samples from bioproject PRJEB62494
+prefetch ERR11468776 --output-directory $PWD --max-size 0.25g
+fastq-dump --split-files --gzip  ERR11468776 -X 500000
 
 # run fastp 
 ## results for full SRA download
 wget http://opengene.org/fastp/fastp
 chmod a+x fastp
-./fastp -i ERR12186498_1.fastq.gz -o ERR12186498_trimmed_1.fastq.gz -I ERR12186498_2.fastq.gz -O ERR12186498_trimmed_2.fastq.gz --detect_adapter_for_pe -f 20 -t 5 -g -l 50 -c -h ERR12186498_fastp.html -w 10
+./fastp -i ERR11468776_1.fastq.gz -o ERR11468776_trimmed_1.fastq.gz -I ERR11468776_2.fastq.gz -O ERR11468776_trimmed_2.fastq.gz --detect_adapter_for_pe -f 20 -t 5 -g -l 50 -c -h ERR11468776_fastp.html -w 10
 
-# map reads with bowtie2
+## install BWA
+git clone https://github.com/lh3/bwa.git
+cd bwa; make
+
+# index ref genome with bwa
 wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/chromosomes/chr6.fa.gz
 gunzip chr6.fa.gz
-bowtie2-build -f chr6.fa --threads 10 chr6_hg38
+./bwa index chr6.fa
+./bwa mem chr6.fa ERR11468776_trimmed_1.fastq.gz ERR11468776_trimmed_2.fastq.gz | gzip -3 > AD2881.sam.gz
 
-bowtie2 --threads 10 -t --sensitive --rf -x chr6_hg38 -1 ERR12186498_trimmed_1.fastq.gz -2 ERR12186498_trimmed_2.fastq.gz -S ERR12186498.sam --met-file mapping_stats
-##### bowtie2 STDOUT ####
-Time loading reference: 00:00:00
-Time loading forward index: 00:00:00
-Time loading mirror index: 00:00:00
+##### bwa STDOUT ####
 
 
-
-Multiseed full-index search: 00:06:22
-15771438 reads; of these:
-  15771438 (100.00%) were paired; of these:
-    14462112 (91.70%) aligned concordantly 0 times
-    557909 (3.54%) aligned concordantly exactly 1 time
-    751417 (4.76%) aligned concordantly >1 times
-    ----
-    14462112 pairs aligned concordantly 0 times; of these:
-      148680 (1.03%) aligned discordantly 1 time
-    ----
-    14313432 pairs aligned 0 times concordantly or discordantly; of these:
-      28626864 mates make up the pairs; of these:
-        27535768 (96.19%) aligned 0 times
-        321563 (1.12%) aligned exactly 1 time
-        769533 (2.69%) aligned >1 times
-12.70% overall alignment rate
-Time searching: 00:06:22
-Overall time: 00:06:22
-##### bowtie2 STDOUT end ####
